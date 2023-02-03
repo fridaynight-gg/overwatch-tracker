@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String         @id @default(cuid())
+  name      String         @default("")
+  email     String         @unique @default("")
+  password  String
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  accounts  Player[]
+  matches   MatchHistory[]
+}
+
+model Player {
+  id           String         @id @default(cuid())
+  battleTag    String         @unique @default("")
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  roleRank     Json?          @db.Json
+  matches      MatchHistory[]
+  hereosPlayed Hero[]
+  User         User?          @relation(fields: [userId], references: [id])
+  userId       String         @unique
+}
+
+model Map {
+  id      Int            @id @default(autoincrement())
+  name    String         @default("")
+  type    String
+  matches MatchHistory[]
+
+  @@unique([name])
+}
+
+model Hero {
+  id           Int            @id @default(autoincrement())
+  name         String
+  role         String
+  avatarImgUrl String
+  matches      MatchHistory[]
+  player       Player[]
+
+  @@unique([name, avatarImgUrl])
+}
+
+model MatchHistory {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  matchDate   DateTime
+  gameMode    String
+  matchResult String
+  location    Map      @relation(fields: [locationId], references: [id])
+  locationId  Int
+  hero        Hero[]
+  account     Player[]
+  user        User?    @relation(fields: [userId], references: [id])
+  userId      String?
+  comment     String?  @db.VarChar(350)
+  playerVibe  Int
+}
