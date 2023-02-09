@@ -11,61 +11,72 @@ datasource db {
 }
 
 model User {
-  id        String         @id @default(cuid())
-  name      String         @default("")
-  email     String         @unique @default("")
+  id        String   @id @default(cuid())
+  name      String   @default("")
+  email     String   @unique @default("")
   password  String
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   accounts  Player[]
-  matches   MatchHistory[]
+  matches   Match[]
 }
 
 model Player {
-  id           String         @id @default(cuid())
-  battleTag    String         @unique @default("")
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  roleRank     Json?          @db.Json
-  matches      MatchHistory[]
-  hereosPlayed Hero[]
-  User         User?          @relation(fields: [userId], references: [id])
-  userId       String         @unique
+  id        String                 @id @default(cuid())
+  battleTag String                 @unique @default("")
+  createdAt DateTime               @default(now())
+  updatedAt DateTime               @updatedAt
+  roleRank  Json?                  @db.Json
+  matches   Match[]
+  heroes    HeroesPlayedByPlayer[]
+  User      User?                  @relation(fields: [userId], references: [id])
+  userId    String?                @unique
 }
 
 model Map {
-  id      Int            @id @default(autoincrement())
-  name    String         @default("")
-  type    String
-  matches MatchHistory[]
+  id        String  @id @default(cuid())
+  name      String  @default("")
+  type      String
+  mapImgUrl String?
+  matches   Match[]
 
   @@unique([name])
 }
 
 model Hero {
-  id           Int            @id @default(autoincrement())
-  name         String
+  id           String                 @id @default(cuid())
+  name         String                 @unique @default("")
   role         String
   avatarImgUrl String
-  matches      MatchHistory[]
-  player       Player[]
-
-  @@unique([name, avatarImgUrl])
+  playedBy     HeroesPlayedByPlayer[]
 }
 
-model MatchHistory {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model HeroesPlayedByPlayer {
+  id        String   @id @default(cuid())
+  hero      Hero     @relation(fields: [heroId], references: [id])
+  heroId    String
+  player    Player   @relation(fields: [playerId], references: [id])
+  playerId  String
+  inMatch   Match    @relation(fields: [matchId], references: [id])
+  matchId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Match {
+  id          String                 @id @default(cuid())
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
   matchDate   DateTime
   gameMode    String
+  attackFirst Boolean?
   matchResult String
-  location    Map      @relation(fields: [locationId], references: [id])
-  locationId  Int
-  hero        Hero[]
+  location    Map                    @relation(fields: [locationId], references: [id])
+  locationId  String
   account     Player[]
-  user        User?    @relation(fields: [userId], references: [id])
-  userId      String?
-  comment     String?  @db.VarChar(350)
+  heroes      HeroesPlayedByPlayer[]
+  user        User?                  @relation(fields: [createdBy], references: [id])
+  createdBy   String?
+  comment     String?                @db.VarChar(350)
   playerVibe  Int
 }

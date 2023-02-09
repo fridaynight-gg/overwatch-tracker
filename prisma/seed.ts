@@ -18,6 +18,21 @@ function getUser() {
         },
       },
     },
+    {
+      name: 'radium',
+      email: 'trevorleeseidel@gmail.com',
+      password: 'password123',
+      accounts: {
+        create: {
+          battleTag: 'radium#1559',
+          roleRank: {
+            damage: 'diamond',
+            tank: 'gold',
+            support: 'masters',
+          },
+        },
+      },
+    },
   ];
 }
 
@@ -65,6 +80,11 @@ function getHero() {
     {
       name: 'Doomfist',
       role: 'Damage',
+      avatarImgUrl: 'https://i.imgur.com/5if5n5H.png',
+    },
+    {
+      name: 'Kiriko',
+      role: 'Support',
       avatarImgUrl: 'https://i.imgur.com/5if5n5H.png',
     },
     {
@@ -205,61 +225,6 @@ function getHero() {
   ];
 }
 
-function getMatchHistory() {
-  return [
-    {
-      location: {
-        connect: {
-          id: 1,
-        },
-      },
-      user: {
-        connect: {
-          id: 'cldoqhovf0000yoy2bl0bw32c',
-        },
-      },
-      hero: {
-        connect: [{ id: 1 }, { id: 9 }, { id: 19 }],
-      },
-      matchResult: 'Win',
-      gameMode: 'Quick Play',
-      matchDate: new Date('2023-02-04'),
-      account: {
-        connect: {
-          id: 'cldoqhovf0001yoy2h4jpng2j',
-        },
-      },
-      comment: 'chillin',
-      playerVibe: 4,
-    },
-    {
-      location: {
-        connect: {
-          id: 2,
-        },
-      },
-      user: {
-        connect: {
-          id: 'cldoqhovf0000yoy2bl0bw32c',
-        },
-      },
-      hero: {
-        connect: [{ id: 19 }, { id: 30 }],
-      },
-      matchResult: 'Loss',
-      gameMode: 'Competitive',
-      matchDate: new Date('2023-02-04'),
-      account: {
-        connect: {
-          id: 'cldoqhovf0001yoy2h4jpng2j',
-        },
-      },
-      comment: 'on fire',
-      playerVibe: 2,
-    },
-  ];
-}
-
 async function seedUser() {
   await Promise.all(
     getUser().map((user) => {
@@ -290,21 +255,10 @@ async function seedHero() {
   );
 }
 
-async function seedMatchHistory() {
-  await Promise.all(
-    getMatchHistory().map((matchHistory) => {
-      return db.matchHistory.create({
-        data: matchHistory,
-      });
-    })
-  );
-}
-
 async function seed() {
-  // await seedUser();
-  // await seedMap();
-  // await seedHero();
-  await seedMatchHistory();
+  await seedUser();
+  await seedMap();
+  await seedHero();
 }
 
 seed();
