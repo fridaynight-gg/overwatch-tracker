@@ -73,13 +73,13 @@ function Document({
   title?: string;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full bg-slate-100">
       <head>
         <Meta />
         <Links />
         <title>{title}</title>
       </head>
-      <body className="h-full overflow-hidden bg-slate-100 font-sans text-gray-800">
+      <body className="h-full overflow-hidden font-sans text-gray-800">
         {children}
         <ScrollRestoration />
         <Scripts />
