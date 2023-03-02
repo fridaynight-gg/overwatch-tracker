@@ -43,7 +43,6 @@ export default function MatchesRoute() {
         Hey, this is the dashboard! We'll show your progress today, this
         competative set, and this season for both quickplay and competative
       </p>
-      <Link to={'/matches'}>View Matches</Link>
     </div>
   );
 }

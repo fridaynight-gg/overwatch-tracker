@@ -9,6 +9,7 @@ import {
   Link,
 } from '@remix-run/react';
 import { useState } from 'react';
+import { Button } from '~/components/Button';
 import type { UserSession } from '~/services/auth.server';
 import { authenticator } from '~/services/auth.server';
 
@@ -361,7 +362,7 @@ export default function NewMatch() {
           {actionData?.formError ? (
             <p role="alert">{actionData.formError}</p>
           ) : null}
-          <button type="submit">Add</button>
+          <Button type="submit">Add</Button>
         </div>
       </Form>
     </div>

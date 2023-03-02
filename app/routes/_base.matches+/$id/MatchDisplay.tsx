@@ -1,4 +1,5 @@
 import { Form, Link } from '@remix-run/react';
+import { Button } from '~/components/Button';
 
 interface MatchDisplayData {
   id: string;
@@ -55,14 +56,14 @@ export function MatchDisplay({
       </Link>
       {isOwner ? (
         <Form method="post">
-          <button
+          <Button
             disabled={!canDelete}
             name="intent"
             type="submit"
             value="delete"
           >
             Delete
-          </button>
+          </Button>
         </Form>
       ) : null}
     </div>

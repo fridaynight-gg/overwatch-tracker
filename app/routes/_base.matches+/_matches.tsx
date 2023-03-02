@@ -1,6 +1,7 @@
 import type { LoaderArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { useLoaderData, useCatch, Link, Outlet } from '@remix-run/react';
+import { Button } from '~/components/Button';
 import type { UserSession } from '~/services/auth.server';
 import { authenticator } from '~/services/auth.server';
 import { db } from '~/services/db.server';
@@ -36,8 +37,6 @@ export default function Matches() {
       <main>
         <div>
           <div>
-            <Link to=".">Recent Match</Link>
-            <p>Here are some recent matches:</p>
             <ul>
               {data.matchHistoryListItems[0]
                 ? data.matchHistoryListItems.map((match) => (
@@ -50,7 +49,9 @@ export default function Matches() {
                   ))
                 : "You haven't added any matches yet"}
             </ul>
-            <Link to="new">Add New Match</Link>
+            <Link to="new">
+              <Button>Add New Match</Button>
+            </Link>
           </div>
           <div>
             <Outlet />
