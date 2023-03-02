@@ -1,0 +1,44 @@
+# fly.toml file generated for overwatch-tracker-db on 2023-02-28T10:41:56+09:00
+
+app = "overwatch-tracker-db"
+kill_signal = "SIGINT"
+kill_timeout = 5
+primary_region = "sea"
+
+[env]
+  PRIMARY_REGION = "sea"
+
+[metrics]
+  port = 9187
+  path = "/metrics"
+
+[mounts]
+  destination = "/data"
+
+[[services]]
+  internal_port = 5432
+  protocol = "tcp"
+
+[[services.ports]]
+  handlers = ["pg_tls"]
+  port = 5432
+
+[checks]
+  [checks.pg]
+    port = 5500
+    type = "http"
+    interval = "15s"
+    timeout = "10s"
+    path = "/flycheck/pg"
+  [checks.role]
+    port = 5500
+    type = "http"
+    interval = "15s"
+    timeout = "10s"
+    path = "/flycheck/role"
+  [checks.vm]
+    port = 5500
+    type = "http"
+    interval = "1m0s"
+    timeout = "10s"
+    path = "/flycheck/vm"

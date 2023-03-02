@@ -11,14 +11,13 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String   @default("")
-  email     String   @unique @default("")
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  accounts  Player[]
-  matches   Match[]
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  accounts     Player[]
+  matches      Match[]
 }
 
 model Player {
@@ -37,7 +36,7 @@ model Map {
   id        String  @id @default(cuid())
   name      String  @default("")
   type      String
-  mapImgUrl String?
+  mapImgUrl String
   matches   Match[]
 
   @@unique([name])
@@ -67,7 +66,6 @@ model Match {
   id          String                 @id @default(cuid())
   createdAt   DateTime               @default(now())
   updatedAt   DateTime               @updatedAt
-  matchDate   DateTime
   gameMode    String
   attackFirst Boolean?
   matchResult String
@@ -75,8 +73,8 @@ model Match {
   locationId  String
   account     Player[]
   heroes      HeroesPlayedByPlayer[]
-  user        User?                  @relation(fields: [createdBy], references: [id])
-  createdBy   String?
+  user        User                   @relation(fields: [createdBy], references: [id])
+  createdBy   String
   comment     String?                @db.VarChar(350)
   playerVibe  Int
 }

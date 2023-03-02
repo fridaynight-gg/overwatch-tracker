@@ -1,30 +1,80 @@
-import type { ActionArgs } from '@remix-run/node';
+import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { useActionData, useLoaderData, Form } from '@remix-run/react';
-
-import { db } from '~/utils/db.server';
-import { badRequest } from '~/utils/request.server';
 import {
-  setPlayerVibe as setVibe,
-  setDateTime as setTime,
-} from '~/models/matches.server';
+  useActionData,
+  useLoaderData,
+  Form,
+  useCatch,
+  Link,
+} from '@remix-run/react';
 import { useState } from 'react';
+import type { UserSession } from '~/services/auth.server';
+import { authenticator } from '~/services/auth.server';
 
-export const loader = async () => {
+import { db } from '~/services/db.server';
+import { badRequest } from '~/services/request.server';
+import { getSession } from '~/services/session.server';
+import { convertStringToNumber as setVibe } from '~/utils/convertStringToNumber';
+
+export const loader = async ({ request }: LoaderArgs) => {
+  const user = (await authenticator.isAuthenticated(request, {
+    failureRedirect: '/login',
+  })) as UserSession;
+  if (!user) {
+    throw new Response('Unauthorized', { status: 401 });
+  }
   const maps = await db.map.findMany({});
   const heroes = await db.hero.findMany({});
   const players = await db.player.findMany({});
   return json({ maps, heroes, players });
 };
 
+function validateMatchMap(map: string) {
+  if (!map) {
+    return 'Map is required';
+  }
+}
+
+function validateMatchGameMode(gameMode: string) {
+  if (!gameMode) {
+    return 'Game mode is required';
+  }
+}
+
+function validateMatchResult(matchResult: string) {
+  if (!matchResult) {
+    return 'Match result is required';
+  }
+}
+
+function validateMatchVibe(vibe: string) {
+  if (!vibe) {
+    return 'Vibe is required';
+  }
+}
+
+function validatePlayerHeroes(playerHeroes: { [key: string]: string[] }) {
+  if (!playerHeroes) {
+    return 'Player heroes are required';
+  }
+}
+
+function validateSelectedPlayers(selectedPlayers: string[]) {
+  if (!selectedPlayers) {
+    return 'Selected players are required';
+  }
+}
+
 export const action = async ({ request }: ActionArgs) => {
+  const user = (await authenticator.isAuthenticated(request, {
+    failureRedirect: '/login',
+  })) as UserSession;
   const form = await request.formData();
   const map = form.get('map');
   const gameMode = form.get('gamemode');
   const attackFirst = form.get('attackFirst');
   const matchResult = form.get('result');
-  const date = form.get('date');
   const vibe = form.get('vibe');
   const comment = form.get('comment');
   const playerHeroes: { [key: string]: string[] } = {};
@@ -44,26 +94,12 @@ export const action = async ({ request }: ActionArgs) => {
     selectedPlayers.push(player.toString());
   }
 
-  console.log(
-    map,
-    gameMode,
-    matchResult,
-    attackFirst,
-    playerHeroes,
-    selectedPlayers,
-    date,
-    vibe,
-    comment
-  );
-
   if (
     typeof map !== 'string' ||
     typeof gameMode !== 'string' ||
-    typeof attackFirst !== 'string' ||
     typeof matchResult !== 'string' ||
     typeof vibe !== 'string' ||
     typeof comment !== 'string' ||
-    typeof date !== 'string' ||
     typeof playerHeroes !== 'object' ||
     typeof selectedPlayers !== 'object'
   ) {
@@ -73,9 +109,8 @@ export const action = async ({ request }: ActionArgs) => {
       formError: `Form not submitted correctly.`,
     });
   }
-  console.log('form submitted correctly');
 
-  function convertToBoolean(attackFirst: string) {
+  function convertToBoolean(attackFirst: FormDataEntryValue | null) {
     if (attackFirst === 'true') {
       return true;
     } else {
@@ -94,8 +129,6 @@ export const action = async ({ request }: ActionArgs) => {
     }, [] as { heroId: string; playerId: string }[]);
   }
 
-  console.log(playerHeroesData(playerHeroes));
-
   function selectedPlayersData(
     selectedPlayers: string[]
   ): Array<{ id: string }> {
@@ -108,7 +141,14 @@ export const action = async ({ request }: ActionArgs) => {
     return playersData;
   }
 
-  console.log(selectedPlayersData(selectedPlayers));
+  const fieldErrors = {
+    location: validateMatchMap(map),
+    gameMode: validateMatchGameMode(gameMode),
+    matchResult: validateMatchResult(matchResult),
+    playerVibe: validateMatchVibe(vibe),
+    heroes: validatePlayerHeroes(playerHeroes),
+    account: validateSelectedPlayers(selectedPlayers),
+  };
 
   const fields = {
     location: {
@@ -127,15 +167,19 @@ export const action = async ({ request }: ActionArgs) => {
     matchResult: matchResult,
     playerVibe: setVibe(vibe),
     comment: comment,
-    matchDate: setTime(date),
   };
 
-  console.log('no field errors, creating match');
-  const match = await db.match.create({
-    data: fields,
-  });
+  if (Object.values(fieldErrors).some(Boolean)) {
+    return badRequest({
+      fieldErrors,
+      fields,
+      formError: null,
+    });
+  }
 
-  console.log('new match created: ', match.id);
+  const match = await db.match.create({
+    data: { ...fields, user: { connect: { id: user.id } } },
+  });
 
   return redirect(`/matches/${match.id}`);
 };
@@ -149,13 +193,6 @@ export default function NewMatch() {
   const [playerHeroes, setPlayerHeroes] = useState<{ [key: string]: string[] }>(
     {}
   );
-
-  // const handleHeroSelection = (playerId: string) => (e) => {
-  //   setPlayerHeroes({
-  //     ...playerHeroes,
-  //     [playerId]: e.target.value,
-  //   });
-  // };
 
   return (
     <div>
@@ -231,8 +268,16 @@ export default function NewMatch() {
               multiple
               name="players"
               id="players"
+              defaultValue={actionData?.fields?.account?.connect?.map(
+                (p) => p.id
+              )}
+              aria-invalid={
+                Boolean(actionData?.fieldErrors?.account) || undefined
+              }
+              aria-errormessage={
+                actionData?.fieldErrors?.account ? 'account-error' : undefined
+              }
               onChange={(e) => {
-                console.log(e.target.selectedOptions);
                 setPlayersSelected(
                   [...e.target.selectedOptions].map((o) => o.value)
                 );
@@ -245,6 +290,15 @@ export default function NewMatch() {
               ))}
             </select>
           </p>
+          {actionData?.fieldErrors?.account ? (
+            <p
+              className="form-validation-error"
+              role="alert"
+              id="account-error"
+            >
+              {actionData.fieldErrors.account}
+            </p>
+          ) : null}
         </div>
         {playersSelected.map((playerId) => (
           <div key={playerId}>
@@ -283,14 +337,19 @@ export default function NewMatch() {
           </div>
         ))}
         <div>
-          <p>
-            <label htmlFor="date">Date Played: </label>
-            <input type="date" name="date" id="date" />
-          </p>
-        </div>
-        <div>
           <label htmlFor="vibe">
-            Player vibe: <input type="range" name="vibe" min="1" max="5" />
+            Player vibe:{' '}
+            <input
+              defaultValue={actionData?.fields?.playerVibe}
+              type="range"
+              name="vibe"
+              min="1"
+              max="5"
+              aria-invalid={Boolean(actionData?.fieldErrors?.playerVibe)}
+              aria-errormessage={
+                actionData?.fieldErrors?.playerVibe ? 'playerVibe' : undefined
+              }
+            />
           </label>
         </div>
         <div>
@@ -305,6 +364,27 @@ export default function NewMatch() {
           <button type="submit">Add</button>
         </div>
       </Form>
+    </div>
+  );
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+
+  if (caught.status === 401) {
+    return (
+      <div className="error-container">
+        <p>You must be logged in to create a match.</p>
+        <Link to="/login">Login</Link>
+      </div>
+    );
+  }
+}
+
+export function ErrorBoundary() {
+  return (
+    <div className="error-container">
+      Something unexpected went wrong. Sorry about that.
     </div>
   );
 }
