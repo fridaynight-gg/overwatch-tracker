@@ -15,8 +15,7 @@ import { authenticator } from '~/services/auth.server';
 
 import { db } from '~/services/db.server';
 import { badRequest } from '~/services/request.server';
-import { getSession } from '~/services/session.server';
-import { convertStringToNumber as setVibe } from '~/utils/convertStringToNumber';
+import { convertStringToNumber as setVibe } from '~/utils/numbers';
 
 export const loader = async ({ request }: LoaderArgs) => {
   const user = (await authenticator.isAuthenticated(request, {

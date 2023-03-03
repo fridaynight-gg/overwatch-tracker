@@ -9,9 +9,9 @@ The goal here is to be able to enter your games as you play and eventually be ab
 - ~~make sure the date is smart about timezone or whatever (auto-add should fix this)~~
 - filter heroes played selection by role and alphabetical order
 - show match history in time order
-- able to adjust rank
 - add what game you're on in your competitive set if match is in comp, on the 5th Win, show field for new rank
 - Make it so that you can see all wins and losses for the season
+- Make it so you can track changes in your avg hero stats over time (i.e a season)
 
 ### Bugs
 
@@ -25,6 +25,14 @@ The goal here is to be able to enter your games as you play and eventually be ab
 - [x] add multiple players per match from the list of players
 - [x] display qeuries dynamic so it can handle the variable number of players and heroes played by each player
 - [x] add authentication
-- [ ] style the app
+- [x] style the app
 - [x] deploy to fly.io
 - [ ] import match history
+- [ ] add ability to create a new account
+- [ ] add ability to edit accounts and add battletags
+- [ ] add ability to edit matches
+- [ ] sync profile account data with overwatch live data (rank, avatar, hero stats etc)
+- [ ] update data model to include seasons and link games played to seasons
+- [ ] update data model to include the concept of 'competitive sets' and link games played to competitive sets
+- [ ] create matches view, individual match view, and dashboard views
+- [ ] add profile route

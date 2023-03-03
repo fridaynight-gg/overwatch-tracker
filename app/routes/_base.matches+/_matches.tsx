@@ -10,6 +10,11 @@ import {
   getStatusMessageFromSession,
   sessionStorage,
 } from '~/services/session.server';
+import { updateSeason } from '~/utils/season-data';
+
+async function updateSeasonDatabaseValue() {
+  await updateSeason();
+}
 
 export const loader = async ({ request }: LoaderArgs) => {
   const user = (await authenticator.isAuthenticated(request, {
