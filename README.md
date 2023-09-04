@@ -1,37 +1,52 @@
 # Welcome to Overwatch Tracker!
 
-The goal here is to be able to enter your games as you play and eventually be able to do interesting analysis on said games to get sick insights on your MMR and performance over time.
+Overwatch Tracker is a tool to track your Overwatch Match history and be able to do interesting analysis on those matches to get sick insights on your MMR and performance over time.
 
-### Improvements
+Current live version can be found at https://overwatch-tracker.fly.dev
 
-- ~~make it so that you can see all matches scoped by user account created~~
-- ~~make it so that the date and timestamp are auto added~~
-- ~~make sure the date is smart about timezone or whatever (auto-add should fix this)~~
-- filter heroes played selection by role and alphabetical order
-- show match history in time order
-- add what game you're on in your competitive set if match is in comp, on the 5th Win, show field for new rank
-- Make it so that you can see all wins and losses for the season
-- Make it so you can track changes in your avg hero stats over time (i.e a season)
+## Techstack
 
-### Bugs
+Core tech and frameworks
 
-- ~~fix not being able to submit control point maps~~
+- [React](https://reactjs.org/)
+- [Remix](https://remix.run/)
+- [Tailwind](https://tailwindcss.com/)
+- [Prisma](https://www.prisma.io/)
+- [Postgres](https://www.postgresql.org/)
+- [Typescript](https://www.typescriptlang.org/)
 
-## TODO
+Libraries
 
-- [x] add field for if attack or defense was played first to the match model
-- [x] add field to the form to set which side was played first that only shows up if the map is not a control or push map
-- [x] add multiple heroes per player per match from the list of heroes
-- [x] add multiple players per match from the list of players
-- [x] display qeuries dynamic so it can handle the variable number of players and heroes played by each player
-- [x] add authentication
-- [x] style the app
-- [x] deploy to fly.io
-- [ ] add ability to create a new account
-- [ ] add ability to edit accounts and add battletags
-- [ ] add ability to edit matches
-- [ ] sync profile account data with overwatch live data (rank, avatar, hero stats etc)
-- [x] update data model to include seasons and link games played to seasons
-- [x] update data model to include the concept of 'competitive sets' and link games played to competitive sets
-- [ ] create matches view, individual match view, and dashboard views
-- [x] add profile route
+- [Framer Motion](https://www.framer.com/motion/)
+- [Zod](https://zod.dev/)
+
+Environment
+
+- [Eslint](https://eslint.org/)
+- [Prettier](https://prettier.io/)
+- [Jest](https://jestjs.io/)
+
+Deployment
+
+- [Docker](https://www.docker.com/)
+- [Fly.io](https://fly.io/)
+
+## Getting Started
+
+Clone the repo and switch to the develop branch run `npm install` to install all dependencies.
+
+Make sure you have a postgres instance running on your machine and that you have a database called `overwatch_tracker` created. Edit your `.env` file with the correct credentials for your database instance so that the app can connect (see sampe.env for an example).
+
+Next run `npx prisma migrate dev` to create the tables to seed the database with some initial data. This will seed data with the data found in the `prisma/seed.ts` file. In there you'll see the username and password of the default users that get created, you can add or update these as you see fit.
+
+If you'd like to interact with the database through a UI, run `npx prisma studio`.
+
+Then run `npm run dev` to start the dev server. You should be able to navigate to `localhost:3000` and see the app running.
+
+You'll now be able to log in with the default users that were created in the seed step.
+
+That's it for getting the project up and running locally!
+
+## Contributing
+
+If you've come across this project from the wild and you'd like contribute, please feel free to open a PR with your changes. We'll be happy to review and merge them in if they fit with the vision of the project.

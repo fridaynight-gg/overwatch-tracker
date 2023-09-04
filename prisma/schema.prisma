@@ -84,7 +84,7 @@ model Match {
 
 model Season {
   id             String           @id @default(cuid())
-  name           String           @unique @default("")
+  name           String           @unique @default("Season 0")
   startDate      DateTime         @default(now())
   endDate        DateTime         @default(now())
   matches        Match[]
