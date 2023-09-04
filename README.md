@@ -34,7 +34,7 @@ Deployment
 
 ## Getting Started
 
-Clone the repo and run `npm install` to install all dependencies.
+Clone the repo and switch to the develop branch run `npm install` to install all dependencies.
 
 Make sure you have a postgres instance running on your machine and that you have a database called `overwatch_tracker` created. Edit your `.env` file with the correct credentials for your database instance so that the app can connect (see sampe.env for an example).
 
