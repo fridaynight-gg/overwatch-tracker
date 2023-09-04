@@ -27,12 +27,11 @@ The goal here is to be able to enter your games as you play and eventually be ab
 - [x] add authentication
 - [x] style the app
 - [x] deploy to fly.io
-- [ ] import match history
 - [ ] add ability to create a new account
 - [ ] add ability to edit accounts and add battletags
 - [ ] add ability to edit matches
 - [ ] sync profile account data with overwatch live data (rank, avatar, hero stats etc)
-- [ ] update data model to include seasons and link games played to seasons
-- [ ] update data model to include the concept of 'competitive sets' and link games played to competitive sets
+- [x] update data model to include seasons and link games played to seasons
+- [x] update data model to include the concept of 'competitive sets' and link games played to competitive sets
 - [ ] create matches view, individual match view, and dashboard views
-- [ ] add profile route
+- [x] add profile route
