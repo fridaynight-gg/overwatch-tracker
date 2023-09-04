@@ -19,7 +19,6 @@ Libraries
 
 - [Framer Motion](https://www.framer.com/motion/)
 - [Zod](https://zod.dev/)
-- [Framer Motion](https://www.framer.com/motion/)
 
 Environment
 
@@ -50,4 +49,4 @@ That's it for getting the project up and running locally!
 
 ## Contributing
 
-If you'd like to contribute to the project, please feel free to open a PR with your changes. We'll be happy to review and merge them in if they fit with the vision of the project.
+If you've come across this project from the wild and you'd like contribute, please feel free to open a PR with your changes. We'll be happy to review and merge them in if they fit with the vision of the project.
