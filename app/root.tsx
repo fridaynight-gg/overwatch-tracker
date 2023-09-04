@@ -79,7 +79,7 @@ function Document({
         <Links />
         <title>{title}</title>
       </head>
-      <body className="h-full overflow-hidden font-sans text-gray-800">
+      <body className="h-full overflow-scroll font-sans text-gray-800">
         {children}
         <ScrollRestoration />
         <Scripts />
