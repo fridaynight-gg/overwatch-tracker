@@ -11,16 +11,16 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  username     String   @unique
+  id           String              @id @default(cuid())
+  username     String              @unique
   passwordHash String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  accounts     Player[]
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  accounts     OverwatchAcccount[]
   matches      Match[]
 }
 
-model Player {
+model OverwatchAcccount {
   id              String                 @id @default(cuid())
   battleTag       String                 @unique @default("")
   createdAt       DateTime               @default(now())
@@ -28,12 +28,12 @@ model Player {
   roleRank        Json?                  @db.Json
   matches         Match[]
   heroes          HeroesPlayedByPlayer[]
-  competitiveSets competitiveSet[]
+  competitiveSets CompetitiveSet[]
   User            User?                  @relation(fields: [userId], references: [id])
   userId          String?                @unique
 }
 
-model Map {
+model OverwatchMap {
   id        String  @id @default(cuid())
   name      String  @default("")
   type      String
@@ -52,15 +52,15 @@ model Hero {
 }
 
 model HeroesPlayedByPlayer {
-  id        String   @id @default(cuid())
-  hero      Hero     @relation(fields: [heroId], references: [id])
+  id        String            @id @default(cuid())
+  hero      Hero              @relation(fields: [heroId], references: [id])
   heroId    String
-  player    Player   @relation(fields: [playerId], references: [id])
+  player    OverwatchAcccount @relation(fields: [playerId], references: [id])
   playerId  String
-  inMatch   Match    @relation(fields: [matchId], references: [id])
+  inMatch   Match             @relation(fields: [matchId], references: [id])
   matchId   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
 }
 
 model Match {
@@ -70,9 +70,9 @@ model Match {
   gameMode    String
   attackFirst Boolean?
   matchResult String
-  location    Map                    @relation(fields: [locationId], references: [id])
+  location    OverwatchMap           @relation(fields: [locationId], references: [id])
   locationId  String
-  account     Player[]
+  account     OverwatchAcccount[]
   heroes      HeroesPlayedByPlayer[]
   user        User                   @relation(fields: [createdBy], references: [id])
   createdBy   String
@@ -88,15 +88,15 @@ model Season {
   startDate      DateTime         @default(now())
   endDate        DateTime         @default(now())
   matches        Match[]
-  competitiveSet competitiveSet[]
+  competitiveSet CompetitiveSet[]
 }
 
-model competitiveSet {
-  id        String   @id @default(cuid())
+model CompetitiveSet {
+  id        String            @id @default(cuid())
   playerId  String
   seasonId  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  player    Player   @relation(fields: [playerId], references: [id])
-  season    Season   @relation(fields: [seasonId], references: [id])
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  player    OverwatchAcccount @relation(fields: [playerId], references: [id])
+  season    Season            @relation(fields: [seasonId], references: [id])
 }
